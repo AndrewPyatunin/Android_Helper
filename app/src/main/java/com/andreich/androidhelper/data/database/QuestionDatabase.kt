@@ -1,12 +1,12 @@
 package com.andreich.androidhelper.data.database
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
 import com.andreich.androidhelper.data.entity.QuestionEntity
+import com.andreich.androidhelper.data.entity.RoomConverter
 
 @Database(entities = [QuestionEntity::class], version = 1, exportSchema = false)
+@TypeConverters(value = [RoomConverter::class])
 abstract class QuestionDatabase : RoomDatabase() {
 
     companion object {

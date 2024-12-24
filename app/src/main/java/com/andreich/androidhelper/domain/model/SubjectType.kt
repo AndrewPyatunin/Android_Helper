@@ -15,14 +15,14 @@ sealed interface TypeAndroid {
 
 sealed interface SubType {
 
-    object Generic : SubType
+    data object Generic : SubType
 
-    object Collections : SubType
+    data object Collections : SubType
 
-    object Types : SubType
+    data object Types : SubType
 
-    object Objects : SubType
+    data object Objects : SubType
 
-    object Functions : SubType
+    data object Functions : SubType
 
 }

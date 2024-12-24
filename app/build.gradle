@@ -3,16 +3,18 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.1.0'
+    id("io.gitlab.arturbosch.detekt") version "1.19.0"
 }
 
 android {
     namespace 'com.andreich.androidhelper'
-    compileSdk 33
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.andreich.androidhelper"
         minSdk 26
-        targetSdk 33
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
@@ -29,33 +31,39 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     buildFeatures {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.1.1'
+        kotlinCompilerExtensionVersion '1.3.2'
     }
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    buildToolsVersion '34.0.0'
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
-    implementation 'androidx.activity:activity-compose:1.3.1'
+    implementation "com.arkivanov.decompose:decompose:$decompose_version"
+    implementation "com.arkivanov.decompose:extensions-compose:$decompose_version"
+    implementation "com.arkivanov.decompose.extensions-compose-jetpack:$decompose_version"
+
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
+    implementation 'androidx.activity:activity-compose:1.9.3'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.compose.material3:material3:1.0.0-alpha02'
+    implementation 'androidx.compose.material3:material3:1.3.1'
+    implementation 'com.google.ar:core:1.47.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
@@ -63,23 +71,27 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    implementation('org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0')
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3'
 
-    implementation("androidx.room:room-runtime:2.5.2")
+    implementation(platform('org.jetbrains.kotlin:kotlin-bom:2.1.0'))
+
+    implementation 'com.google.code.gson:gson:2.11.0'
     // To use Kotlin annotation processing tool (kapt)
-    kapt("androidx.room:room-compiler:2.5.2")
-    implementation("androidx.room:room-ktx:2.5.2")
+    kapt('androidx.room:room-compiler:2.6.1')
+    implementation('androidx.room:room-ktx:2.6.1')
+    implementation('androidx.room:room-runtime:2.6.1')
 
-    implementation 'com.google.dagger:dagger:2.46.1'
-    kapt 'com.google.dagger:dagger-compiler:2.46.1'
+    implementation 'com.google.dagger:dagger:2.53.1'
+    kapt 'com.google.dagger:dagger-compiler:2.53.1'
 
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
-    implementation "androidx.room:room-paging:2.5.2"
+    implementation 'androidx.room:room-paging:2.6.1'
 
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.7'
 
-    implementation("ru.tinkoff.kotea:core:1.1.0")
-    implementation("ru.tinkoff.kotea:android:1.1.0") // android extensions
-    implementation("ru.tinkoff.kotea:logging:1.1.0") // factory with logging feature
+    implementation('ru.tinkoff.kotea:core:1.2.4')
+    implementation('ru.tinkoff.kotea:android:1.2.4') // android extensions
+    implementation('ru.tinkoff.kotea:logging:1.2.4') // factory with logging feature
 }

@@ -24,6 +24,10 @@ class RepositoryImpl @Inject constructor(
         dataSource.insertQuestion(questionMapper(question))
     }
 
+    override suspend fun chooseAnswer(answerId: Int, questionId: Int): Boolean {
+        return answerId == questionId
+    }
+
     override fun getQuestions(question: Question): Flow<List<Question>> {
         return dataSource.getAnswers(questionMapper(question)).map {
             it.map { entity ->

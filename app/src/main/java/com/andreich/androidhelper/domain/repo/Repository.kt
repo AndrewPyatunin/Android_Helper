@@ -9,5 +9,7 @@ interface Repository {
 
     suspend fun insertQuestion(question: Question)
 
+    suspend fun chooseAnswer(answerId: Int, questionId: Int): Boolean
+
     fun getQuestions(question: Question): Flow<List<Question>>
 }

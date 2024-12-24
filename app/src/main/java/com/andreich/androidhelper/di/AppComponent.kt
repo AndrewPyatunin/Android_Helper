@@ -1,6 +1,7 @@
 package com.andreich.androidhelper.di
 
 import android.content.Context
+import com.andreich.androidhelper.MainActivity
 import dagger.BindsInstance
 import dagger.Component
 
@@ -14,5 +15,5 @@ interface AppComponent {
         fun create(@BindsInstance context: Context): AppComponent
     }
 
-    fun inject()
+    fun inject(activity: MainActivity)
 }

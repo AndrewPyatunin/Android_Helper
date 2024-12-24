@@ -1,5 +1,6 @@
 package com.andreich.androidhelper.data.database
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -8,6 +9,7 @@ import com.andreich.androidhelper.domain.model.SubType
 import com.andreich.androidhelper.domain.model.SubjectType
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface QuestionDao {
 
     @Query("SELECT * FROM question WHERE id = :id")
