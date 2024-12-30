@@ -1,46 +1,42 @@
 package com.andreich.androidhelper.presentation.game_screen
 
 import com.andreich.androidhelper.core.componentScope
-import com.andreich.androidhelper.domain.model.Question
 import com.arkivanov.decompose.ComponentContext
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.arkivanov.mvikotlin.core.instancekeeper.getStore
+import com.arkivanov.mvikotlin.extensions.coroutines.labels
+import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DefaultGameScreenComponent @Inject constructor(
     componentContext: ComponentContext,
-    private val question: Question,
-    private val answers: List<Question>,
-    val onAnswerClick: (answerId: Int, questionId: Int) -> Unit,
+    private val storeFactory: GameStoreFactory
 ) : GameScreenComponent, ComponentContext by componentContext {
 
     private val coroutineScope = componentScope()
-
-    private val _model = MutableStateFlow(
-        stateKeeper.consume(KEY, GameScreenComponent.Model.serializer())
-            ?: GameScreenComponent.Model(question.id, question.title, answers)
-    )
-
-    override val model: StateFlow<GameScreenComponent.Model>
-        get() = _model.asStateFlow()
+    private val store = instanceKeeper.getStore {
+        storeFactory.create()
+    }
 
     init {
-        stateKeeper.register(
-            key = KEY,
-            strategy = GameScreenComponent.Model.serializer()
-        ) {
-            model.value
+        coroutineScope.launch {
+            store.labels.collect {
+                when(it) {
+                    is GameStore.Label.Answer -> {
+                        store.accept(GameStore.Intent.LoadQuestion(it.excludedIds))
+                    }
+                }
+            }
         }
     }
 
-    override fun onAnswerClick(answerId: Int) {
-        onAnswerClick(answerId, question.id)
-    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override val model: StateFlow<GameStore.State>
+        get() = store.stateFlow
 
-    private companion object {
-
-        private const val KEY = "DefaultGameScreenComponent"
-
+    override fun onAnswerClick(questionId: Long, answerId: Long) {
+        store.accept(GameStore.Intent.ChooseAnswer(questionId, answerId))
     }
 }

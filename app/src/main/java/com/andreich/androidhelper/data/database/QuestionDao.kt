@@ -13,7 +13,10 @@ import kotlinx.coroutines.flow.Flow
 interface QuestionDao {
 
     @Query("SELECT * FROM question WHERE id = :id")
-    suspend fun getQuestion(id: Int): QuestionEntity
+    suspend fun getQuestion(id: Long): QuestionEntity
+
+    @Query("SELECT * FROM question WHERE id NOT IN (:excludedIds) ORDER BY RANDOM() LIMIT 1")
+    suspend fun getQuestionLimitation(excludedIds: List<Long>): QuestionEntity
 
     @Query("SELECT * FROM question WHERE :subType IS NULL AND subject = :subject OR subType = :subType")
     fun getAnswers(subject: SubjectType, subType: SubType?): Flow<List<QuestionEntity>>

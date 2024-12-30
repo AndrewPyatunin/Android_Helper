@@ -7,7 +7,9 @@ interface LocalDataSource {
 
     fun getAnswers(question: QuestionEntity): Flow<List<QuestionEntity>>
 
-    suspend fun getQuestion(id: Int): QuestionEntity
+    suspend fun getQuestionWithLimitation(excludedIds: List<Long>): QuestionEntity
+
+    suspend fun getQuestion(id: Long): QuestionEntity
 
     suspend fun insertQuestion(question: QuestionEntity)
 }

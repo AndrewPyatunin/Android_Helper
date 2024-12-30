@@ -13,7 +13,11 @@ class LocalDataSourceImpl @Inject constructor(
         return dao.getAnswers(question.subject, question.subType)
     }
 
-    override suspend fun getQuestion(id: Int): QuestionEntity {
+    override suspend fun getQuestionWithLimitation(excludedIds: List<Long>): QuestionEntity {
+        return dao.getQuestionLimitation(excludedIds)
+    }
+
+    override suspend fun getQuestion(id: Long): QuestionEntity {
         return dao.getQuestion(id)
     }
 

@@ -18,7 +18,9 @@ fun RootContent(
             Children(component.stack) {
                 when (val instance = it.instance) {
 
-                    is RootComponent.Child.AddQuestion -> TODO()
+                    is RootComponent.Child.AddQuestion -> {
+                        AddQuestionScreen(instance.component)
+                    }
                     is RootComponent.Child.BestResults -> TODO()
                     is RootComponent.Child.Game -> {
                         GameScreen(instance.component)

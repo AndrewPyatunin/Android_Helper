@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Question(
-    val id: Int,
+    val id: Long,
     val title: String,
     val subject: SubjectType,
     val answer: String,

@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 
 interface GameScreenComponent {
 
-    val model: StateFlow<Model>
+    val model: StateFlow<GameStore.State>
 
-    fun onAnswerClick(answerId: Int)
+    fun onAnswerClick(questionId: Long, answerId: Long)
 
     @Serializable
     data class Model(

@@ -1,19 +1,21 @@
 package com.andreich.androidhelper.domain.model
 
-sealed interface SubjectType {
+sealed interface Type
+
+sealed interface SubjectType : Type {
 
     object Kotlin : SubjectType
 
     object Java : SubjectType
 
-    data class AndroidSdk(val subType: TypeAndroid) : SubjectType
+    object AndroidSdk : SubjectType
 }
 
 sealed interface TypeAndroid {
 
 }
 
-sealed interface SubType {
+sealed interface SubType : Type {
 
     data object Generic : SubType
 

@@ -16,7 +16,7 @@ class RepositoryImpl @Inject constructor(
     private val questionMapper: ModelMapper<Question, QuestionEntity>
 ) : Repository {
 
-    override suspend fun getQuestion(id: Int): Question {
+    override suspend fun getQuestion(id: Long): Question {
         return questionEntityMapper(dataSource.getQuestion(id))
     }
 
@@ -24,8 +24,12 @@ class RepositoryImpl @Inject constructor(
         dataSource.insertQuestion(questionMapper(question))
     }
 
-    override suspend fun chooseAnswer(answerId: Int, questionId: Int): Boolean {
+    override suspend fun chooseAnswer(answerId: Long, questionId: Long): Boolean {
         return answerId == questionId
+    }
+
+    override suspend fun getNewQuestionWithLimitations(excludedIds: List<Long>): Question {
+        return questionEntityMapper(dataSource.getQuestionWithLimitation(excludedIds))
     }
 
     override fun getQuestions(question: Question): Flow<List<Question>> {

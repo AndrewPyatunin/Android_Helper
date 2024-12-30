@@ -8,7 +8,7 @@ import com.andreich.androidhelper.domain.model.SubjectType
 @Entity("question")
 data class QuestionEntity(
     @PrimaryKey
-    val id: Int,
+    val id: Long = -1,
     val title: String,
     val subject: SubjectType,
     val answer: String,

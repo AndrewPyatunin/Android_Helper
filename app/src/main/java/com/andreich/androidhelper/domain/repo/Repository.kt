@@ -5,11 +5,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface Repository {
 
-    suspend fun getQuestion(id: Int): Question
+    suspend fun getQuestion(id: Long): Question
 
     suspend fun insertQuestion(question: Question)
 
-    suspend fun chooseAnswer(answerId: Int, questionId: Int): Boolean
+    suspend fun chooseAnswer(answerId: Long, questionId: Long): Boolean
+
+    suspend fun getNewQuestionWithLimitations(excludedIds: List<Long>): Question
 
     fun getQuestions(question: Question): Flow<List<Question>>
 }

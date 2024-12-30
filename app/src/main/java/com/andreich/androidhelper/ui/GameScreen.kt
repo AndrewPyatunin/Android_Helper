@@ -36,45 +36,49 @@ fun GameScreen(component: GameScreenComponent) {
     val model by component.model.collectAsState()
     val answers = model.answers
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Text(
-                modifier = Modifier.padding(4.dp),
-                text = model.questionText
-            ) //"Основа объектно ориентированного программирования")
-        }
-        Row(modifier = Modifier.fillMaxWidth()) {
-            AnswerCard(
-                rightId = model.answerId,
-                answer = answers[0],
-                onAnswerClickListener = { component.onAnswerClick(it.id) })
+    model.question?.let { question ->
+        Column(modifier = Modifier.fillMaxSize()) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Text(
+                    modifier = Modifier.padding(4.dp),
+                    text = question.title
+                ) //"Основа объектно ориентированного программирования")
+            }
+            Row(modifier = Modifier.fillMaxWidth()) {
+                AnswerCard(
+                    rightId = question.id,
+                    answer = answers[0],
+                    onAnswerClickListener = { component.onAnswerClick(question.id, it.id) })
 
-            AnswerCard(
-                rightId = model.answerId,
-                answer = answers[1],
-                onAnswerClickListener = { component.onAnswerClick(it.id) })
-        }
-        Spacer(modifier = Modifier.size(8.dp))
-        Row(modifier = Modifier.fillMaxWidth()) {
-            AnswerCard(
-                rightId = model.answerId,
-                answer = answers[2],
-                onAnswerClickListener = { component.onAnswerClick(it.id) })
-            AnswerCard(
-                rightId = model.answerId,
-                answer = answers[3],
-                onAnswerClickListener = { component.onAnswerClick(it.id) })
+                AnswerCard(
+                    rightId = question.id,
+                    answer = answers[1],
+                    onAnswerClickListener = { component.onAnswerClick(question.id, it.id) })
+            }
+            Spacer(modifier = Modifier.size(8.dp))
+            Row(modifier = Modifier.fillMaxWidth()) {
+                AnswerCard(
+                    rightId = question.id,
+                    answer = answers[2],
+                    onAnswerClickListener = { component.onAnswerClick(question.id, it.id) })
+                AnswerCard(
+                    rightId = question.id,
+                    answer = answers[3],
+                    onAnswerClickListener = { component.onAnswerClick(question.id, it.id) })
+            }
         }
     }
+
+
 }
 
 @Composable
 fun RowWithTwoCards(
-    rightId: Int,
+    rightId: Long,
     answers: List<Question>,
     onAnswerClickListener: (Question) -> Unit
 ) {
@@ -95,7 +99,7 @@ fun RowWithTwoCards(
 
 @Composable
 fun RowScope.AnswerCard(
-    rightId: Int,
+    rightId: Long,
     answer: Question,
     onAnswerClickListener: (Question) -> Unit,
 ) {
