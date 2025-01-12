@@ -8,22 +8,34 @@ interface GameStore : Store<GameStore.Intent, GameStore.State, GameStore.Label> 
     data class State(
         val isLoading: Boolean,
         val question: Question?,
-        val answers: List<Question>,
+        val answers: List<AnswerCard>,
         val excludedIds: List<Long> = emptyList(),
-        val answerCorrectness: Boolean? = null
+        val rightAnswersCount: Int = 0,
+        val count: Int = 0,
+        val isClickable: Boolean = true
     )
 
     sealed interface Intent {
+
+        data class PutCount(val count: Int) : Intent
 
         data class LoadQuestion(val excludedIds: List<Long>) : Intent
 
         data class LoadAnswers(val question: Question) : Intent
 
-        data class ChooseAnswer(val questionId: Long, val answerId: Long) : Intent
+        data class ChooseAnswer(val chosenAnswer: String, val answer: String, val excludedIds: List<Long>) : Intent
+
+        object LoadNewQuestion : Intent
+
+        object Clear : Intent
     }
 
     sealed interface Label {
 
+        object LastAnswer : Label
+
         class Answer(val excludedIds: List<Long>) : Label
+
+        object NextAnswer : Label
     }
 }

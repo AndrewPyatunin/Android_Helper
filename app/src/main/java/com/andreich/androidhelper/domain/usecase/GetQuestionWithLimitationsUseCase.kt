@@ -8,6 +8,6 @@ class GetQuestionWithLimitationsUseCase @Inject constructor(
     private val repository: Repository
 ) {
 
-    suspend operator fun invoke(excludedIds: List<Long>): Question =
+    suspend operator fun invoke(excludedIds: List<Long>): Question? =
         repository.getNewQuestionWithLimitations(excludedIds)
 }

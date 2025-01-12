@@ -14,7 +14,10 @@ class QuestionEntityToQuestionMapper @Inject constructor() : EntityMapper<Questi
                 subject = subject,
                 answer = answer,
                 subType = subType,
-                answerType = answerType
+                answerType = answerType,
+                wrongAnswer1 = wrongAnswer1,
+                wrongAnswer2 = wrongAnswer2,
+                wrongAnswer3 = wrongAnswer3,
             )
         }
     }

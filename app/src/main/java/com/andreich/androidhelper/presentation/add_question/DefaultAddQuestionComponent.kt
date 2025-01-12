@@ -1,9 +1,7 @@
 package com.andreich.androidhelper.presentation.add_question
 
 import com.andreich.androidhelper.core.componentScope
-import com.andreich.androidhelper.domain.model.Question
-import com.andreich.androidhelper.domain.model.SubType
-import com.andreich.androidhelper.domain.model.SubjectType
+import com.andreich.androidhelper.presentation.AnswerType
 import com.andreich.androidhelper.presentation.QuestionUi
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
@@ -31,7 +29,7 @@ class DefaultAddQuestionComponent @Inject constructor(
     init {
         componentScope().launch {
             store.labels.collect {
-                when(it) {
+                when (it) {
                     AddQuestionStore.Label.SaveSuccessful -> {
                         onSaveQuestion()
                     }
@@ -44,12 +42,12 @@ class DefaultAddQuestionComponent @Inject constructor(
         store.accept(AddQuestionStore.Intent.SaveQuestion(question))
     }
 
-    override fun onAnswerChange(answer: String) {
-        store.accept(AddQuestionStore.Intent.ChangeAnswer(answer))
+    override fun onAnswerChange(answer: String, answerType: AnswerType) {
+        store.accept(AddQuestionStore.Intent.ChangeAnswer(answer.trim(), answerType))
     }
 
     override fun onQuestionTitleChange(title: String) {
-        store.accept(AddQuestionStore.Intent.ChangeQuestionTitle(title))
+        store.accept(AddQuestionStore.Intent.ChangeQuestionTitle(title.trim()))
     }
 
     override fun onTypeChange(type: String) {
@@ -58,5 +56,15 @@ class DefaultAddQuestionComponent @Inject constructor(
 
     override fun onSubjectChange(subjectType: String) {
         store.accept(AddQuestionStore.Intent.ChangeSubject(subjectType))
+    }
+
+    override fun trySave(
+        questionTitle: String,
+        answer: String,
+        wrongAnswer1: String,
+        wrongAnswer2: String,
+        wrongAnswer3: String
+    ) {
+        store.accept(AddQuestionStore.Intent.TryToSave(questionTitle, answer, wrongAnswer1, wrongAnswer2, wrongAnswer3))
     }
 }

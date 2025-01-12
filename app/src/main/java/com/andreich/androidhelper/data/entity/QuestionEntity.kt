@@ -12,6 +12,9 @@ data class QuestionEntity(
     val title: String,
     val subject: SubjectType,
     val answer: String,
+    val wrongAnswer1: String,
+    val wrongAnswer2: String,
+    val wrongAnswer3: String,
     val subType: SubType? = null,
     val answerType: Boolean? = null,
 )

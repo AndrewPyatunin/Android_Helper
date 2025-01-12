@@ -94,8 +94,4 @@ dependencies {
     implementation 'androidx.room:room-paging:2.6.1'
 
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.7'
-
-    implementation('ru.tinkoff.kotea:core:1.2.4')
-    implementation('ru.tinkoff.kotea:android:1.2.4') // android extensions
-    implementation('ru.tinkoff.kotea:logging:1.2.4') // factory with logging feature
 }

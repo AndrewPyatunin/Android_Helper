@@ -4,6 +4,7 @@ import com.andreich.androidhelper.domain.model.Question
 import com.andreich.androidhelper.domain.model.SubType
 import com.andreich.androidhelper.domain.model.SubjectType
 import com.andreich.androidhelper.domain.usecase.InsertQuestionUseCase
+import com.andreich.androidhelper.presentation.AnswerType
 import com.andreich.androidhelper.presentation.QuestionUi
 import com.andreich.androidhelper.presentation.add_question.AddQuestionStore.Intent
 import com.andreich.androidhelper.presentation.add_question.AddQuestionStore.Label
@@ -20,16 +21,16 @@ class AddQuestionStoreFactory @Inject constructor(
     private val insertQuestionUseCase: InsertQuestionUseCase
 ) {
 
-    private val store: Store<Intent, State, Label> =
+    fun create(): AddQuestionStore = object : AddQuestionStore by store {}
+
+    private val store: AddQuestionStore =
         object : AddQuestionStore, Store<Intent, State, Label> by storeFactory.create(
             name = "AddQuestionStore",
-            initialState = State("", "", Type_Types, Subject_Java),
+            initialState = State("", "", Type_Types, Subject_Java, "", "", ""),
             bootstrapper = null,
             executorFactory = ::ExecutorImpl,
             reducer = ReducerImpl,
         ) {}
-
-    fun create(): AddQuestionStore = object : AddQuestionStore by store as AddQuestionStore {}
 
     private inner class ExecutorImpl : CoroutineExecutor<Intent, Action, State, Message, Label>() {
 
@@ -59,7 +60,10 @@ class AddQuestionStoreFactory @Inject constructor(
                 title = title,
                 answer = answer,
                 subject = subject.mapSubjectType(),
-                subType = subType.mapSubType()
+                subType = subType.mapSubType(),
+                wrongAnswer1 = wrongAnswer1,
+                wrongAnswer2 = wrongAnswer2,
+                wrongAnswer3 = wrongAnswer3
             )
         }
 
@@ -76,7 +80,7 @@ class AddQuestionStoreFactory @Inject constructor(
                 }
 
                 is Intent.ChangeAnswer -> {
-                    dispatch(Message.ChangeAnswer(intent.answer))
+                    dispatch(Message.ChangeAnswer(intent.answer, intent.answerType))
                 }
 
                 is Intent.ChangeQuestionTitle -> {
@@ -90,6 +94,10 @@ class AddQuestionStoreFactory @Inject constructor(
                 is Intent.ChangeType -> {
                     dispatch(Message.ChangeType(intent.type))
                 }
+
+                is Intent.TryToSave -> {
+
+                }
             }
         }
     }
@@ -97,27 +105,14 @@ class AddQuestionStoreFactory @Inject constructor(
 
     object ReducerImpl : Reducer<State, Message> {
 
-        private fun SubType.mapSubType(): String {
-            return when (this) {
-                SubType.Collections -> Type_Collections
-                SubType.Functions -> Type_Functions
-                SubType.Generic -> Type_Generic
-                SubType.Objects -> Type_Objects
-                SubType.Types -> Type_Types
-            }
-        }
-
-        private fun SubjectType.mapSubjectType(): String {
-            return when (this) {
-                is SubjectType.AndroidSdk -> Subject_AndroidSdk
-                SubjectType.Java -> Subject_Java
-                SubjectType.Kotlin -> Subject_Kotlin
-            }
-        }
-
         override fun State.reduce(msg: Message): State = when (msg) {
             is Message.ChangeAnswer -> {
-                copy(answer = msg.answer)
+                when(msg.answerType) {
+                    AnswerType.RIGHT -> copy(answer = msg.answer)
+                    AnswerType.WRONG_1 -> copy(wrongAnswer1 = msg.answer)
+                    AnswerType.WRONG_2 -> copy(wrongAnswer2 = msg.answer)
+                    AnswerType.WRONG_3 -> copy(wrongAnswer3 = msg.answer)
+                }
             }
 
             is Message.ChangeQuestionTitle -> {
@@ -138,7 +133,7 @@ class AddQuestionStoreFactory @Inject constructor(
 
         class ChangeQuestionTitle(val title: String) : Message
 
-        class ChangeAnswer(val answer: String) : Message
+        class ChangeAnswer(val answer: String, val answerType: AnswerType) : Message
 
         class ChangeType(val type: String) : Message
 

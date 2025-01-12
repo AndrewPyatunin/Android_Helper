@@ -8,7 +8,7 @@ interface GameScreenComponent {
 
     val model: StateFlow<GameStore.State>
 
-    fun onAnswerClick(questionId: Long, answerId: Long)
+    fun onAnswerClick(chosenAnswer: String, answer: String, excludedIds: List<Long>)
 
     @Serializable
     data class Model(

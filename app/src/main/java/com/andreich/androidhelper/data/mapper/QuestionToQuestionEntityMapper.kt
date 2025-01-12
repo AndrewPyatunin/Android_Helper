@@ -8,7 +8,7 @@ class QuestionToQuestionEntityMapper @Inject constructor() : ModelMapper<Questio
 
     override fun invoke(from: Question): QuestionEntity {
         return with(from) {
-            QuestionEntity(id, title, subject, answer, subType, answerType)
+            QuestionEntity(id, title, subject, answer, wrongAnswer1, wrongAnswer2, wrongAnswer3, subType, answerType)
         }
     }
 }

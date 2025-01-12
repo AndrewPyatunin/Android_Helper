@@ -7,7 +7,7 @@ class ChooseAnswerUseCase @Inject constructor(
     private val repository: Repository
 ) {
 
-    suspend operator fun invoke(answerId: Long, questionId: Long): Boolean {
-        return repository.chooseAnswer(answerId, questionId)
+    suspend operator fun invoke(chosenAnswer: String, answer: String): Boolean {
+        return repository.chooseAnswer(chosenAnswer, answer)
     }
 }

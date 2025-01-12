@@ -16,11 +16,14 @@ interface QuestionDao {
     suspend fun getQuestion(id: Long): QuestionEntity
 
     @Query("SELECT * FROM question WHERE id NOT IN (:excludedIds) ORDER BY RANDOM() LIMIT 1")
-    suspend fun getQuestionLimitation(excludedIds: List<Long>): QuestionEntity
+    suspend fun getQuestionLimitation(excludedIds: List<Long>): QuestionEntity?
 
     @Query("SELECT * FROM question WHERE :subType IS NULL AND subject = :subject OR subType = :subType")
     fun getAnswers(subject: SubjectType, subType: SubType?): Flow<List<QuestionEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuestion(question: QuestionEntity)
+
+    @Query("SELECT COUNT(*) FROM question")
+    fun countQuestions(): Flow<Int>
 }

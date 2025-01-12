@@ -10,6 +10,8 @@ import com.andreich.androidhelper.presentation.RootComponent.*
 import com.andreich.androidhelper.presentation.add_question.AddQuestionStoreFactory
 import com.andreich.androidhelper.presentation.add_question.DefaultAddQuestionComponent
 import com.andreich.androidhelper.presentation.game_screen.GameStoreFactory
+import com.andreich.androidhelper.presentation.home_screen.DefaultHomeComponent
+import com.andreich.androidhelper.presentation.home_screen.HomeStoreFactory
 import com.arkivanov.decompose.DelicateDecomposeApi
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
@@ -19,6 +21,7 @@ import javax.inject.Inject
 class DefaultRootComponent @Inject constructor(
     private val gameStoreFactory: GameStoreFactory,
     private val addQuestionStoreFactory: AddQuestionStoreFactory,
+    private val homeStoreFactory: HomeStoreFactory,
     componentContext: ComponentContext
 ) : RootComponent, ComponentContext by componentContext {
 
@@ -27,8 +30,8 @@ class DefaultRootComponent @Inject constructor(
 
     override val stack: Value<ChildStack<*, Child>> = childStack(
         source = navigation,
-        initialConfiguration = Config.AddQuestion,
-        serializer = null,
+        initialConfiguration = Config.Home,
+        serializer = Config.serializer(),
         handleBackButton = true,
         childFactory = ::child
     )
@@ -42,8 +45,12 @@ class DefaultRootComponent @Inject constructor(
             is Config.Game -> {
                 val component = DefaultGameScreenComponent(
                     componentContext = componentContext,
-                    storeFactory = gameStoreFactory
-                )
+                    storeFactory = gameStoreFactory,
+                    count = config.count,
+                    onRestart = navigation::pop
+                ) {
+                    navigation.pop()
+                }
                 Child.Game(component)
             }
 
@@ -63,15 +70,26 @@ class DefaultRootComponent @Inject constructor(
                 throw Exception()
             }
             Config.Home -> {
-                throw Exception()
+                val component = DefaultHomeComponent(
+                    componentContext = componentContext,
+                    storeFactory = homeStoreFactory,
+                    onAddQuestionClicked = {
+                        navigation.push(Config.AddQuestion)
+                    },
+                    onStartAGameClicked = {
+                        navigation.push(Config.Game(it))
+                    }
+                )
+                Child.Home(component)
             }
         }
     }
 
+    @Serializable
     private sealed interface Config {
 
         @Serializable
-        object Game : Config
+        data class Game(val count: Int) : Config
 
         @Serializable
         object Home : Config

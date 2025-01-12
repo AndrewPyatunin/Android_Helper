@@ -24,12 +24,16 @@ class RepositoryImpl @Inject constructor(
         dataSource.insertQuestion(questionMapper(question))
     }
 
-    override suspend fun chooseAnswer(answerId: Long, questionId: Long): Boolean {
-        return answerId == questionId
+    override suspend fun chooseAnswer(chosenAnswer: String, answer: String): Boolean {
+        return chosenAnswer == answer
     }
 
-    override suspend fun getNewQuestionWithLimitations(excludedIds: List<Long>): Question {
-        return questionEntityMapper(dataSource.getQuestionWithLimitation(excludedIds))
+    override suspend fun getNewQuestionWithLimitations(excludedIds: List<Long>): Question? {
+        return dataSource.getQuestionWithLimitation(excludedIds)?.let { questionEntityMapper(it) }
+    }
+
+    override fun getQuestionCount(): Flow<Int> {
+        return dataSource.getQuestionCount()
     }
 
     override fun getQuestions(question: Question): Flow<List<Question>> {

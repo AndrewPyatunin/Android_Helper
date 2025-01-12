@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.andreich.androidhelper.presentation.DefaultRootComponent
 import com.andreich.androidhelper.presentation.add_question.AddQuestionStoreFactory
 import com.andreich.androidhelper.presentation.game_screen.GameStoreFactory
+import com.andreich.androidhelper.presentation.home_screen.HomeStoreFactory
 import com.andreich.androidhelper.ui.RootContent
 import com.andreich.androidhelper.ui.theme.AndroidHelperTheme
 import com.arkivanov.decompose.defaultComponentContext
@@ -33,10 +34,13 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var addQuestionStoreFactory: AddQuestionStoreFactory
 
+    @Inject
+    lateinit var homeStoreFactory: HomeStoreFactory
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         component.inject(this)
-        val rootComponent = DefaultRootComponent(gameStoreFactory, addQuestionStoreFactory, defaultComponentContext())
+        val rootComponent = DefaultRootComponent(gameStoreFactory, addQuestionStoreFactory, homeStoreFactory, defaultComponentContext())
         setContent {
             AndroidHelperTheme {
                 // A surface container using the 'background' color from the theme

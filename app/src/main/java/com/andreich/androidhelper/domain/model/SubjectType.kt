@@ -1,30 +1,13 @@
 package com.andreich.androidhelper.domain.model
 
-sealed interface Type
+import kotlinx.serialization.Serializable
 
-sealed interface SubjectType : Type {
 
-    object Kotlin : SubjectType
-
-    object Java : SubjectType
-
-    object AndroidSdk : SubjectType
+@Serializable
+enum class SubjectType {
+    Kotlin, Java, AndroidSdk
 }
-
-sealed interface TypeAndroid {
-
-}
-
-sealed interface SubType : Type {
-
-    data object Generic : SubType
-
-    data object Collections : SubType
-
-    data object Types : SubType
-
-    data object Objects : SubType
-
-    data object Functions : SubType
-
+@Serializable
+enum class SubType {
+    Generic, Collections, Types, Objects, Functions
 }
