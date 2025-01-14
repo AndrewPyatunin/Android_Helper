@@ -1,6 +1,7 @@
 package com.andreich.androidhelper.presentation.game_screen
 
 import com.andreich.androidhelper.core.componentScope
+import com.andreich.androidhelper.presentation.game_result_screen.GameResultStore
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
@@ -39,6 +40,10 @@ class DefaultGameScreenComponent @Inject constructor(
                     }
 
                     GameStore.Label.NextAnswer -> {
+                    }
+
+                    GameStore.Label.QuestionIsReady -> {
+                        store.accept(GameStore.Intent.StartTimer(30))
                     }
                 }
             }

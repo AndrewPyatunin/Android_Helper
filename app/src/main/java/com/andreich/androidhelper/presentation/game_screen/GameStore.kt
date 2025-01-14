@@ -12,7 +12,8 @@ interface GameStore : Store<GameStore.Intent, GameStore.State, GameStore.Label> 
         val excludedIds: List<Long> = emptyList(),
         val rightAnswersCount: Int = 0,
         val count: Int = 0,
-        val isClickable: Boolean = true
+        val isClickable: Boolean = true,
+        val remainTime: Int = 30
     )
 
     sealed interface Intent {
@@ -25,7 +26,11 @@ interface GameStore : Store<GameStore.Intent, GameStore.State, GameStore.Label> 
 
         data class ChooseAnswer(val chosenAnswer: String, val answer: String, val excludedIds: List<Long>) : Intent
 
+        data class ExcludeUsedIds(val excludedIds: List<Long>) : Intent
+
         object LoadNewQuestion : Intent
+
+        class StartTimer(val remainTime: Int) : Intent
 
         object Clear : Intent
     }
@@ -37,5 +42,7 @@ interface GameStore : Store<GameStore.Intent, GameStore.State, GameStore.Label> 
         class Answer(val excludedIds: List<Long>) : Label
 
         object NextAnswer : Label
+
+        object QuestionIsReady : Label
     }
 }

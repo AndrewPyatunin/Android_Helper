@@ -11,6 +11,7 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.andreich.androidhelper.presentation.game_screen.GameStore.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,7 +49,6 @@ class GameStoreFactory @Inject constructor(
                     scope.launch {
                         dispatch(Message.Clickable(false))
                         val state = state()
-                        publish(Label.Answer(intent.excludedIds))
                         chooseAnswerUseCase(intent.chosenAnswer, intent.answer).let {
                             when(it) {
                                 true -> {
@@ -60,11 +60,7 @@ class GameStoreFactory @Inject constructor(
                             }
                         }
                         delay(500)
-                        if (intent.excludedIds.size >= state.count) {
-                            publish(Label.LastAnswer)
-                        } else {
-                            loadQuestion(state.excludedIds)
-                        }
+                        checkIsLast()
                     }
                 }
 
@@ -73,7 +69,7 @@ class GameStoreFactory @Inject constructor(
                 }
 
                 is Intent.LoadQuestion -> {
-                    dispatch(Message.LoadQuestion(intent.excludedIds))
+                    dispatch(Message.ExcludeUsedIds(intent.excludedIds))
                 }
 
                 is Intent.PutCount -> {
@@ -84,6 +80,7 @@ class GameStoreFactory @Inject constructor(
                     scope.launch {
                         getQuestionUseCase(emptyList())?.let {
                             dispatch(Message.QuestionIsReady(it))
+                            publish(Label.QuestionIsReady)
                         }
                     }
                 }
@@ -91,14 +88,51 @@ class GameStoreFactory @Inject constructor(
                 is Intent.Clear -> {
                     dispatch(Message.LastAnswer)
                 }
+
+                is Intent.ExcludeUsedIds -> {
+                    dispatch(Message.ExcludeUsedIds(intent.excludedIds))
+                }
+
+                is Intent.StartTimer -> {
+                    startATimer(intent.remainTime)
+                }
             }
         }
         private fun CoroutineScope.loadQuestion(excludedIds: List<Long>) {
             launch {
                 getQuestionUseCase(excludedIds)?.let {
                     dispatch(Message.QuestionIsReady(it))
-                    publish(Label.NextAnswer)
+                    publish(Label.QuestionIsReady)
                     dispatch(Message.Clickable(true))
+                }
+            }
+        }
+
+        private fun CoroutineScope.checkIsLast() {
+            val currentState = state()
+            if (currentState.excludedIds.size >= currentState.count) {
+                publish(Label.LastAnswer)
+            } else {
+                loadQuestion(currentState.excludedIds)
+            }
+            dispatch(Message.ResetTimer)
+        }
+
+        private fun startATimer(initial: Int) {
+
+            var a = initial
+            val flow = flow {
+                while (a>-1) {
+                    emit(a--)
+                    delay(1000)
+                }
+            }
+            scope.launch {
+                flow.collect {
+                    if(it == 0) {
+                        checkIsLast()
+                    }
+                    dispatch(Message.ChangeTime(it))
                 }
             }
         }
@@ -118,7 +152,7 @@ class GameStoreFactory @Inject constructor(
 
         class LoadError(val message: String) : Message
 
-        class LoadQuestion(val excludedIds: List<Long>) : Message
+        class ExcludeUsedIds(val excludedIds: List<Long>) : Message
 
         class LoadAnswers(val question: Question) : Message
 
@@ -128,7 +162,11 @@ class GameStoreFactory @Inject constructor(
 
         class WrongAnswer(val title: String) : Message
 
+        class ChangeTime(val remainTime: Int) : Message
+
         object LastAnswer : Message
+
+        object ResetTimer : Message
     }
 
     private object ReducerImpl : Reducer<State, Message> {
@@ -154,14 +192,14 @@ class GameStoreFactory @Inject constructor(
                 }
 
                 is Message.LastAnswer -> {
-                    copy(excludedIds = emptyList(), isClickable = true, question = null, answers = emptyList(), count = 0, rightAnswersCount = 0)
+                    copy(excludedIds = emptyList(), isClickable = true, question = null, answers = emptyList(), count = 0, rightAnswersCount = 0, remainTime = 30)
                 }
 
                 is Message.LoadAnswers -> {
                     copy(isLoading = true)
                 }
 
-                is Message.LoadQuestion -> {
+                is Message.ExcludeUsedIds -> {
                     copy(isLoading = true, excludedIds = msg.excludedIds)
                 }
 
@@ -180,6 +218,12 @@ class GameStoreFactory @Inject constructor(
                 is Message.PutCount -> {
                     copy(count = msg.count)
                 }
+
+                is Message.ChangeTime -> {
+                    copy(remainTime = msg.remainTime)
+                }
+
+                is Message.ResetTimer -> copy(remainTime = 30)
             }
         }
     }

@@ -12,4 +12,5 @@
     <string name="game_result">Результат игры</string>
     <string name="game_right_answer_count">Число правильных ответов: %1$s</string>
     <string name="game_right_answer_percent">Процент правильных ответов: %1$s%%</string>
+    <string name="remaining_time">Оставшееся время: %1$s</string>
 </resources>

@@ -16,7 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.andreich.androidhelper.R
 import com.andreich.androidhelper.presentation.game_screen.AnswerCard
 import com.andreich.androidhelper.presentation.game_screen.GameScreenComponent
 
@@ -64,6 +67,10 @@ fun GameScreen(component: GameScreenComponent) {
                     onAnswerClickListener = { component.onAnswerClick(it, question.answer, model.excludedIds) },
                     isClickable = model.isClickable
                 )
+            }
+            Spacer(modifier = Modifier.padding(24.dp))
+            Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp), elevation = CardDefaults.cardElevation(8.dp)) {
+                Text(stringResource(R.string.remaining_time, model.remainTime), fontSize = 20.sp, modifier = Modifier.padding(8.dp))
             }
         }
     }
