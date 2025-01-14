@@ -12,10 +12,10 @@ import javax.inject.Inject
 
 class DefaultGameScreenComponent @Inject constructor(
     componentContext: ComponentContext,
-    private val storeFactory: GameStoreFactory,
+    storeFactory: GameStoreFactory,
     count: Int,
     private val onRestart: () -> Unit,
-    private val showResult: () -> Unit,
+    private val showResult: (Int, List<Long>) -> Unit,
 ) : GameScreenComponent, ComponentContext by componentContext {
 
 
@@ -28,13 +28,14 @@ class DefaultGameScreenComponent @Inject constructor(
             store.accept(GameStore.Intent.LoadNewQuestion)
 
             store.labels.collect {
+                val state = model.value
                 when (it) {
                     is GameStore.Label.Answer -> {
                         store.accept(GameStore.Intent.LoadQuestion(it.excludedIds))
                     }
 
                     GameStore.Label.LastAnswer -> {
-                        showResult()
+                        showResult(state.rightAnswersCount, state.excludedIds)
                     }
 
                     GameStore.Label.NextAnswer -> {

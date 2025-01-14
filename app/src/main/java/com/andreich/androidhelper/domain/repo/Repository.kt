@@ -13,7 +13,7 @@ interface Repository {
 
     suspend fun getNewQuestionWithLimitations(excludedIds: List<Long>): Question?
 
-    fun getQuestionCount(): Flow<Int>
+    suspend fun getAnswers(ids: List<Long>): List<Question>
 
-    fun getQuestions(question: Question): Flow<List<Question>>
+    fun getQuestionCount(): Flow<Int>
 }

@@ -32,15 +32,13 @@ class RepositoryImpl @Inject constructor(
         return dataSource.getQuestionWithLimitation(excludedIds)?.let { questionEntityMapper(it) }
     }
 
-    override fun getQuestionCount(): Flow<Int> {
-        return dataSource.getQuestionCount()
+    override suspend fun getAnswers(ids: List<Long>): List<Question> {
+        return dataSource.getAnswers(ids).map {
+            questionEntityMapper(it)
+        }
     }
 
-    override fun getQuestions(question: Question): Flow<List<Question>> {
-        return dataSource.getAnswers(questionMapper(question)).map {
-            it.map { entity ->
-                questionEntityMapper(entity)
-            }
-        }
+    override fun getQuestionCount(): Flow<Int> {
+        return dataSource.getQuestionCount()
     }
 }

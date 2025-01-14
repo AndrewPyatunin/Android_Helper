@@ -9,11 +9,14 @@ import com.arkivanov.decompose.value.Value
 import com.andreich.androidhelper.presentation.RootComponent.*
 import com.andreich.androidhelper.presentation.add_question.AddQuestionStoreFactory
 import com.andreich.androidhelper.presentation.add_question.DefaultAddQuestionComponent
+import com.andreich.androidhelper.presentation.game_result_screen.DefaultGameResultComponent
+import com.andreich.androidhelper.presentation.game_result_screen.GameResultStoreFactory
 import com.andreich.androidhelper.presentation.game_screen.GameStoreFactory
 import com.andreich.androidhelper.presentation.home_screen.DefaultHomeComponent
 import com.andreich.androidhelper.presentation.home_screen.HomeStoreFactory
 import com.arkivanov.decompose.DelicateDecomposeApi
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.popToFirst
 import com.arkivanov.decompose.router.stack.push
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
@@ -22,6 +25,7 @@ class DefaultRootComponent @Inject constructor(
     private val gameStoreFactory: GameStoreFactory,
     private val addQuestionStoreFactory: AddQuestionStoreFactory,
     private val homeStoreFactory: HomeStoreFactory,
+    private val gameResultStoreFactory: GameResultStoreFactory,
     componentContext: ComponentContext
 ) : RootComponent, ComponentContext by componentContext {
 
@@ -48,8 +52,8 @@ class DefaultRootComponent @Inject constructor(
                     storeFactory = gameStoreFactory,
                     count = config.count,
                     onRestart = navigation::pop
-                ) {
-                    navigation.pop()
+                ) { countRightAnswers, ids ->
+                    navigation.push(Config.GameResult(config.count, countRightAnswers, ids))
                 }
                 Child.Game(component)
             }
@@ -66,8 +70,17 @@ class DefaultRootComponent @Inject constructor(
             Config.BestResults -> {
                 throw Exception()
             }
-            Config.GameResult -> {
-                throw Exception()
+            is Config.GameResult -> {
+                val component = DefaultGameResultComponent(
+                    componentContext = componentContext,
+                    storeFactory = gameResultStoreFactory,
+                    count = config.count,
+                    countRightAnswers = config.countRightAnswers,
+                    ids = config.ids
+                ) {
+                    navigation.popToFirst()
+                }
+                Child.GameResult(component)
             }
             Config.Home -> {
                 val component = DefaultHomeComponent(
@@ -95,7 +108,7 @@ class DefaultRootComponent @Inject constructor(
         object Home : Config
 
         @Serializable
-        object GameResult : Config
+        class GameResult(val count: Int, val countRightAnswers: Int, val ids: List<Long>) : Config
 
         @Serializable
         object AddQuestion : Config

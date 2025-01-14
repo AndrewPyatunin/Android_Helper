@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalDataSource {
 
-    fun getAnswers(question: QuestionEntity): Flow<List<QuestionEntity>>
+    suspend fun getAnswers(ids: List<Long>): List<QuestionEntity>
 
     suspend fun getQuestionWithLimitation(excludedIds: List<Long>): QuestionEntity?
 

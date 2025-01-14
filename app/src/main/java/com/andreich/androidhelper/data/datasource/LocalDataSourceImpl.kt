@@ -9,8 +9,8 @@ class LocalDataSourceImpl @Inject constructor(
     private val dao: QuestionDao
 ) : LocalDataSource {
 
-    override fun getAnswers(question: QuestionEntity): Flow<List<QuestionEntity>> {
-        return dao.getAnswers(question.subject, question.subType)
+    override suspend fun getAnswers(ids: List<Long>): List<QuestionEntity> {
+        return dao.getAnswers(ids)
     }
 
     override suspend fun getQuestionWithLimitation(excludedIds: List<Long>): QuestionEntity? {

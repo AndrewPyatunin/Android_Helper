@@ -7,7 +7,6 @@ import com.andreich.androidhelper.domain.usecase.GetQuestionWithLimitationsUseCa
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.andreich.androidhelper.presentation.game_screen.GameStore.*
 import kotlinx.coroutines.CoroutineScope
@@ -37,10 +36,6 @@ class GameStoreFactory @Inject constructor(
 
         override fun executeAction(action: Action) {
             when (action) {
-                is Action.AnswersIsReady -> {
-                    dispatch(Message.AnswersIsReady(action.answers))
-                }
-
                 is Action.QuestionIsReady -> {
                     dispatch(Message.QuestionIsReady(action.question))
                 }
@@ -67,7 +62,6 @@ class GameStoreFactory @Inject constructor(
                         delay(500)
                         if (intent.excludedIds.size >= state.count) {
                             publish(Label.LastAnswer)
-                            dispatch(Message.LastAnswer)
                         } else {
                             loadQuestion(state.excludedIds)
                         }
@@ -113,14 +107,10 @@ class GameStoreFactory @Inject constructor(
 
     private sealed interface Action {
 
-        class AnswersIsReady(val answers: List<Question>) : Action
-
         class QuestionIsReady(val question: Question) : Action
     }
 
     private sealed interface Message {
-
-        class AnswersIsReady(val answers: List<Question>) : Message
 
         class QuestionIsReady(val question: Question) : Message
 
@@ -164,7 +154,7 @@ class GameStoreFactory @Inject constructor(
                 }
 
                 is Message.LastAnswer -> {
-                    copy(excludedIds = emptyList(), isClickable = true, question = null, answers = emptyList(), count = 0)
+                    copy(excludedIds = emptyList(), isClickable = true, question = null, answers = emptyList(), count = 0, rightAnswersCount = 0)
                 }
 
                 is Message.LoadAnswers -> {
@@ -173,10 +163,6 @@ class GameStoreFactory @Inject constructor(
 
                 is Message.LoadQuestion -> {
                     copy(isLoading = true, excludedIds = msg.excludedIds)
-                }
-
-                is Message.AnswersIsReady -> {
-                    copy(isLoading = false)
                 }
 
                 is Message.LoadError -> {

@@ -8,4 +8,8 @@
     <string name="answer">Ответ</string>
     <string name="add_new_question">Добавьте новый вопрос</string>
     <string name="wrong_answers">Неправильные ответы:</string>
+    <string name="game_question_count">Всего вопросов: %1$s</string>
+    <string name="game_result">Результат игры</string>
+    <string name="game_right_answer_count">Число правильных ответов: %1$s</string>
+    <string name="game_right_answer_percent">Процент правильных ответов: %1$s%%</string>
 </resources>

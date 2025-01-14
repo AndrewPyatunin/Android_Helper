@@ -15,6 +15,9 @@ interface QuestionDao {
     @Query("SELECT * FROM question WHERE id = :id")
     suspend fun getQuestion(id: Long): QuestionEntity
 
+    @Query("SELECT * FROM question WHERE id IN (:ids)")
+    suspend fun getAnswers(ids: List<Long>): List<QuestionEntity>
+
     @Query("SELECT * FROM question WHERE id NOT IN (:excludedIds) ORDER BY RANDOM() LIMIT 1")
     suspend fun getQuestionLimitation(excludedIds: List<Long>): QuestionEntity?
 

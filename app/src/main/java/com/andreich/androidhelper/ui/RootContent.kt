@@ -26,7 +26,9 @@ fun RootContent(
                         GameScreen(instance.component)
                     }
 
-                    is RootComponent.Child.GameResult -> TODO()
+                    is RootComponent.Child.GameResult -> {
+                        GameResultScreen(instance.component)
+                    }
                     is RootComponent.Child.Home -> {
                         HomeScreen(instance.component)
                     }
